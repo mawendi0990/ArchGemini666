@@ -82,10 +82,9 @@ function App() {
     };
 
     return (
-        <div className="flex h-screen bg-apple-gray-50 dark:bg-black text-apple-gray-900 dark:text-apple-gray-100 overflow-hidden font-sans selection:bg-apple-blue/30 transition-colors duration-300">
+        <div className="flex h-screen w-screen bg-apple-gray-50 dark:bg-black text-apple-gray-900 dark:text-apple-gray-100 overflow-hidden font-sans selection:bg-apple-blue/30 transition-colors duration-300">
 
             {/* Sidebar */}
-            {/* Sidebar - Cleaner Look */}
             <div className="w-80 flex flex-col border-r border-black/5 dark:border-white/10 bg-white/50 dark:bg-black/50 backdrop-blur-2xl p-6 overflow-y-auto relative z-10 transition-colors duration-300">
                 <div className="flex items-center justify-between mb-10">
                     <div className="flex items-center gap-3 text-apple-blue">
@@ -224,7 +223,7 @@ function App() {
 
                 <div className="flex-1 p-8 z-10 flex items-center justify-center overflow-hidden">
                     <div className="w-full h-full max-w-5xl bg-white dark:bg-apple-gray-900/40 rounded-2xl border border-apple-gray-200 dark:border-white/10 shadow-xl dark:shadow-2xl backdrop-blur-sm overflow-hidden flex flex-col transition-colors duration-300">
-                        <div className="flex-1 p-1">
+                        <div className="flex-1 p-1 overflow-hidden flex flex-col">
                             <ImageGenerator
                                 prompt={currentPrompt}
                                 images={currentImages}

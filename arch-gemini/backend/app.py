@@ -54,19 +54,32 @@ async def optimize_prompt_endpoint(req: OptimizeRequest):
 async def generate_image_endpoint(req: GenerateRequest):
     async with HEAVY_TASK_SEMAPHORE:
         try:
-            # Basic cleanup of data:image/...;base64, prefix if present
-            clean_images = []
+            # Process images to extract mime_type and data
+            processed_images = []
             for img in req.images:
-                if "," in img:
-                    clean_images.append(img.split(",")[1])
-                else:
-                    clean_images.append(img)
+                mime_type = "image/jpeg"
+                data = img
+                
+                if "base64," in img:
+                    # Format: data:image/png;base64,.....
+                    parts = img.split("base64,")
+                    data = parts[1]
+                    
+                    # Extract mime type from parts[0]
+                    # parts[0] looks like "data:image/png;"
+                    if "data:" in parts[0] and ";" in parts[0]:
+                        mime_type = parts[0].split("data:")[1].split(";")[0]
+                
+                processed_images.append({
+                    "data": data,
+                    "mime_type": mime_type
+                })
                     
             image_base64, mime_type, model_used = await generate_image(
                 prompt=req.prompt, 
                 aspect_ratio=req.aspect_ratio, 
                 resolution=req.resolution,
-                images=clean_images
+                images=processed_images
             )
             return {
                 "image_base64": image_base64,

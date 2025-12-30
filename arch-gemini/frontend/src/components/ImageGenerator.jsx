@@ -134,34 +134,48 @@ const ImageGenerator = ({ prompt, images = [], onGenerationSuccess }) => {
 
       {error && <div className="p-3 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-200 text-xs rounded-lg border border-red-200 dark:border-red-800/50">{error}</div>}
 
-      <div className="flex-1 bg-apple-gray-100 dark:bg-black/40 border border-transparent dark:border-white/10 rounded-xl overflow-hidden relative flex items-center justify-center min-h-0 shadow-inner">
-        {loading && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/50 dark:bg-black/50 z-10 backdrop-blur-sm">
-            <Loader2 className="w-8 h-8 text-apple-blue animate-spin mb-2" />
-            <p className="text-apple-gray-500 dark:text-apple-gray-400 text-sm font-medium">Gemini 正在渲染中...</p>
-          </div>
-        )}
+      <div className="flex-1 flex gap-4 min-h-0 overflow-hidden">
+        <div className="flex-1 bg-apple-gray-100 dark:bg-black/40 border border-transparent dark:border-white/10 rounded-xl overflow-hidden relative flex items-center justify-center shadow-inner">
+          {loading && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/50 dark:bg-black/50 z-10 backdrop-blur-sm">
+              <Loader2 className="w-8 h-8 text-apple-blue animate-spin mb-2" />
+              <p className="text-apple-gray-500 dark:text-apple-gray-400 text-sm font-medium">Gemini 正在渲染中...</p>
+            </div>
+          )}
 
-        {image ? (
-          <div className="relative group w-full h-full flex items-center justify-center bg-transparent">
-            <img
-              src={`data:${mimeType};base64,${image}`}
-              alt="Generated"
-              className="max-w-full max-h-full object-contain shadow-2xl rounded-lg"
-            />
-            <a
-              href={`data:${mimeType};base64,${image}`}
-              download={`arch-gemini-render.${mimeType === "image/png" ? "png" : "jpg"}`}
-              className="absolute bottom-6 right-6 p-3 bg-white/90 dark:bg-black/60 backdrop-blur-md rounded-full text-apple-gray-900 dark:text-white shadow-lg opacity-0 group-hover:opacity-100 transition-all hover:scale-110"
-            >
-              <Download className="w-5 h-5" />
-            </a>
-          </div>
-        ) : (
-          <div className="text-apple-gray-400 dark:text-apple-gray-600 flex flex-col items-center">
-            <ImageIcon className="w-16 h-16 mb-4 opacity-20" />
-            <p className="text-sm font-medium">输入提示词并点击生成</p>
-          </div>
+          {image ? (
+            <div className="w-full h-full overflow-auto p-4 custom-scrollbar flex items-center justify-center bg-black/5 dark:bg-black/20">
+                 <img
+                  src={`data:${mimeType};base64,${image}`}
+                  alt="Generated"
+                  className="shadow-2xl rounded-lg transition-all duration-300"
+                  style={{
+                      maxWidth: '100%', 
+                      height: 'auto',
+                      objectFit: 'contain'
+                  }}
+                />
+            </div>
+          ) : (
+            <div className="text-apple-gray-400 dark:text-apple-gray-600 flex flex-col items-center">
+              <ImageIcon className="w-16 h-16 mb-4 opacity-20" />
+              <p className="text-sm font-medium">输入提示词并点击生成</p>
+            </div>
+          )}
+        </div>
+
+        {/* Sidebar Actions (Always Visible) */}
+        {image && (
+             <div className="w-12 flex flex-col gap-3 shrink-0 animate-in fade-in slide-in-from-right-4 duration-500">
+                <a
+                  href={`data:${mimeType};base64,${image}`}
+                  download={`arch-gemini-render.${mimeType === "image/png" ? "png" : "jpg"}`}
+                  className="w-12 h-12 flex items-center justify-center bg-apple-blue text-white rounded-xl shadow-lg hover:bg-blue-600 transition-all hover:scale-105 active:scale-95"
+                  title="下载图片"
+                >
+                  <Download className="w-5 h-5" />
+                </a>
+             </div>
         )}
       </div>
     </div>

@@ -1,5 +1,6 @@
 import httpx
 from core.config import settings
+from core.http_client import http_client
 
 def _extract_inline_image_part(result: dict) -> tuple[str, str]:
     candidates = result.get("candidates") or []
@@ -83,11 +84,11 @@ async def _generate_image_with_model(prompt: str, aspect_ratio: str, resolution:
         }
     }
 
-    async with httpx.AsyncClient(timeout=60.0) as client:
-        response = await client.post(url, json=data, headers=headers)
-        response.raise_for_status()
-        result = response.json()
-        return _extract_inline_image_part(result)
+    client = http_client.get_client()
+    response = await client.post(url, json=data, headers=headers, timeout=60.0)
+    response.raise_for_status()
+    result = response.json()
+    return _extract_inline_image_part(result)
 
 
 from services.gemini_vision import analyze_image
@@ -118,7 +119,7 @@ async def _analyze_reference_images(images: List[str]) -> str:
         
     return "\n\n【参考图像分析】:\n" + "\n".join(descriptions)
 
-async def generate_image(prompt: str, aspect_ratio: str = "16:9", resolution: str = "1K", images: List[str] = []) -> tuple[str, str, str]:
+async def generate_image(prompt: str, aspect_ratio: str = "16:9", resolution: str = "1K", images: List[dict] = []) -> tuple[str, str, str]:
     primary_model = settings.GEMINI_IMAGE_MODEL
     fallback_model = settings.GEMINI_IMAGE_FALLBACK_MODEL
 
