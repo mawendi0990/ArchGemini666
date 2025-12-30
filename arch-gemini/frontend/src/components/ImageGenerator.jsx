@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Image as ImageIcon, Loader2, Download, Save } from 'lucide-react';
 import { addToHistory } from '../utils/historyDb';
+import { API_BASE_URL } from '../config';
 
 const ImageGenerator = ({ prompt, images = [], onGenerationSuccess }) => {
   const [loading, setLoading] = useState(false);
@@ -24,7 +25,7 @@ const ImageGenerator = ({ prompt, images = [], onGenerationSuccess }) => {
     setImage(null);
     setMimeType("image/png");
     try {
-      const response = await fetch(`http://${window.location.hostname}:8000/api/generate-image`, {
+      const response = await fetch(`${API_BASE_URL}/api/generate-image`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

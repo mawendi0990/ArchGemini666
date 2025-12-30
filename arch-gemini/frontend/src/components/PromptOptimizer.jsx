@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Wand2, Loader2 } from 'lucide-react';
+import { API_BASE_URL } from '../config';
 
 const PromptOptimizer = ({ onPromptChange, currentPrompt }) => {
   const [loading, setLoading] = useState(false);
@@ -10,7 +11,7 @@ const PromptOptimizer = ({ onPromptChange, currentPrompt }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`http://${window.location.hostname}:8000/api/optimize-prompt`, {
+      const response = await fetch(`${API_BASE_URL}/api/optimize-prompt`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: currentPrompt }),

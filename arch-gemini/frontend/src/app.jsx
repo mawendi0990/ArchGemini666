@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { API_BASE_URL } from './config';
 import PromptOptimizer from './components/PromptOptimizer';
 import ImageGenerator from './components/ImageGenerator';
 import ImageUploader from './components/ImageUploader';
@@ -58,7 +59,7 @@ function App() {
         // Prompt is now handled by backend based on analysis_type, but we can pass a dummy or specific one if needed
         // For now, we rely on backend defaults for scene/facade
 
-        const response = await fetch(`http://${window.location.hostname}:8000/api/analyze-image`, {
+        const response = await fetch(`${API_BASE_URL}/api/analyze-image`, {
             method: 'POST',
             body: formData,
         });
