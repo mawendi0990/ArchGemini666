@@ -1,6 +1,7 @@
 import httpx
 from core.config import settings
 from prompts import ARCH_RENDER_SYSTEM_PROMPT
+from error_prompts import ERROR_TRANSLATION_SYSTEM_PROMPT
 
 async def optimize_prompt(text: str) -> str:
     if not settings.QWEN_API_KEY:
@@ -36,3 +37,38 @@ async def optimize_prompt(text: str) -> str:
             raise Exception(f"Qwen API Error: {e.response.text}")
         except Exception as e:
             raise Exception(f"Qwen Service Error: {str(e)}")
+
+async def translate_error(error_msg: str) -> str:
+    """Use Qwen to translate technical error messages into user-friendly Chinese."""
+    if not settings.QWEN_API_KEY:
+        return "发生未知错误（且Qwen API未配置）。"
+
+    headers = {
+        "Authorization": f"Bearer {settings.QWEN_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    
+    data = {
+        "model": settings.QWEN_MODEL,
+        "messages": [
+            {"role": "system", "content": ERROR_TRANSLATION_SYSTEM_PROMPT},
+            {"role": "user", "content": f"Error Message: {error_msg}"}
+        ]
+    }
+
+    base_url = settings.QWEN_API_BASE_URL.rstrip('/')
+    
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.post(
+                f"{base_url}/chat/completions",
+                json=data,
+                headers=headers
+            )
+            response.raise_for_status()
+            result = response.json()
+            return result['choices'][0]['message']['content'].strip()
+    except Exception:
+        # Fallback if translation fails
+        return "系统繁忙，请稍后重试。"
+
