@@ -21,7 +21,7 @@ const ImageAnalyzer = ({ onAnalysisComplete }) => {
       formData.append('file', file);
       formData.append('prompt', "Analyze this architectural image. Describe the style, materials, lighting, and composition in detail to help recreate it.");
 
-      const response = await fetch(`http://${window.location.hostname}:8000/api/analyze-image`, {
+      const response = await fetch(`${API_BASE_URL}/api/analyze-image`, {
         method: 'POST',
         body: formData,
       });
