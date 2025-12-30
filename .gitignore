@@ -1,0 +1,51 @@
+# General & OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.log
+tmp/
+temp/
+
+# IDEs & Editors
+.vscode/
+.idea/
+.trae/
+*.swp
+*.swo
+
+# Environment Variables (Secrets)
+.env
+.env.local
+.env.*.local
+# Keep .env.example if you create one
+!.env.example
+
+# Python (Backend)
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+.pytest_cache/
+.coverage
+htmlcov/
+*.spec
+
+# Node.js / Frontend
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build Outputs (Frontend/Electron)
+dist/
+dist-ssr/
+release/
+build/
+out/
+
+# Local/Private Configs
+# If there are any local config files that shouldn't be shared
