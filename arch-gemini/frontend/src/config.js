@@ -7,10 +7,10 @@ const getApiBaseUrl = () => {
         return import.meta.env.VITE_API_BASE_URL;
     }
 
-    // 2. If running on localhost, assume standard dev setup (Backend on 8000)
-    // This allows running frontend (5173) and backend (8000) separately without Nginx
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        return 'http://localhost:8000';
+    // 2. If running on standard Vite dev port (5173), assume backend is on 8000
+    // This covers both localhost and LAN access (e.g. 192.168.1.x:5173)
+    if (window.location.port === '5173') {
+        return `http://${window.location.hostname}:8000`;
     }
 
     // 3. For production/deployment (e.g. Nginx serving frontend), use relative path
