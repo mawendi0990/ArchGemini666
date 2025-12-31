@@ -40,9 +40,15 @@ def _extract_inline_image_part(result: dict) -> tuple[str, str]:
     raise Exception(f"无法提取图片数据。Finish Reason: {finish_reason}. Response: {str(result)[:200]}")
 
 
-from typing import List
+from typing import Any, Dict, List, Union
 
-async def _generate_image_with_model(prompt: str, aspect_ratio: str, resolution: str, model: str, images: List[str] = []) -> tuple[str, str]:
+async def _generate_image_with_model(
+    prompt: str,
+    aspect_ratio: str,
+    resolution: str,
+    model: str,
+    images: List[Union[str, Dict[str, Any]]] = [],
+) -> tuple[str, str]:
     if not settings.GOOGLE_API_KEY:
         raise ValueError("GOOGLE_API_KEY is not set")
 
@@ -60,13 +66,25 @@ async def _generate_image_with_model(prompt: str, aspect_ratio: str, resolution:
     # Append negative prompt to ensure quality and safety
     full_prompt = f"{prompt}\n\n[Negative Prompt / Exclude]: {DEFAULT_NEGATIVE_PROMPT.strip()}"
     parts = [{"text": full_prompt}]
-    for img_b64 in images:
-        parts.append({
-            "inline_data": {
-                "mime_type": "image/jpeg", 
-                "data": img_b64
+    for img in images:
+        if isinstance(img, dict):
+            img_b64 = img.get("data")
+            mime_type = img.get("mime_type") or "image/jpeg"
+        else:
+            img_b64 = img
+            mime_type = "image/jpeg"
+
+        if not img_b64:
+            continue
+
+        parts.append(
+            {
+                "inline_data": {
+                    "mime_type": mime_type,
+                    "data": img_b64,
+                }
             }
-        })
+        )
 
     data = {
         "contents": [
