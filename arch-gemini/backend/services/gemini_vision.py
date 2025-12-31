@@ -31,8 +31,8 @@ async def analyze_image(image_bytes: bytes, mime_type: str = "image/png", prompt
                 "parts": [
                     {"text": prompt},
                     {
-                        "inline_data": {
-                            "mime_type": mime_type,
+                        "inlineData": {
+                            "mimeType": mime_type,
                             "data": b64_image
                         }
                     }

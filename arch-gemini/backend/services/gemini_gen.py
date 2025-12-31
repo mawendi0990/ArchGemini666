@@ -79,8 +79,8 @@ async def _generate_image_with_model(
 
         parts.append(
             {
-                "inline_data": {
-                    "mime_type": mime_type,
+                "inlineData": {
+                    "mimeType": mime_type,
                     "data": img_b64,
                 }
             }
