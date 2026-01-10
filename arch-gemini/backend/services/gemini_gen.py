@@ -48,15 +48,17 @@ async def _generate_image_with_model(
     resolution: str,
     model: str,
     images: List[Union[str, Dict[str, Any]]] = [],
-) -> tuple[str, str]:
-    if not settings.GOOGLE_API_KEY:
+) -> tuple[str, str, str]:
+    # Use dynamic key rotation
+    api_key = settings.get_google_api_key()
+    if not api_key:
         raise ValueError("GOOGLE_API_KEY is not set")
 
     base_url = settings.GOOGLE_API_BASE_URL.rstrip('/')
     url = f"{base_url}/v1beta/models/{model}:generateContent"
 
     headers = {
-        "x-goog-api-key": settings.GOOGLE_API_KEY,
+        "x-goog-api-key": api_key,
         "Content-Type": "application/json"
     }
 
@@ -106,7 +108,8 @@ async def _generate_image_with_model(
     response = await client.post(url, json=data, headers=headers, timeout=60.0)
     response.raise_for_status()
     result = response.json()
-    return _extract_inline_image_part(result)
+    image_data, mime_type = _extract_inline_image_part(result)
+    return image_data, mime_type, api_key
 
 
 from services.gemini_vision import analyze_image
@@ -123,7 +126,8 @@ async def _analyze_reference_images(images: List[str]) -> str:
         try:
             # Simple decoding to bytes for the existing analyze_image function
             img_bytes = base64.b64decode(img_b64)
-            desc = await analyze_image(
+            # analyze_image handles key internally, but we might want to standardize
+            desc, _ = await analyze_image(
                 img_bytes, 
                 mime_type="image/jpeg", # Defaulting to jpeg/png as generic
                 prompt="请详细描述这张图片的视觉特征、构图、材质和光照，用于指导AI重新生成类似的画面。"
@@ -137,7 +141,7 @@ async def _analyze_reference_images(images: List[str]) -> str:
         
     return "\n\n【参考图像分析】:\n" + "\n".join(descriptions)
 
-async def generate_image(prompt: str, aspect_ratio: str = "16:9", resolution: str = "1K", images: List[dict] = []) -> tuple[str, str, str]:
+async def generate_image(prompt: str, aspect_ratio: str = "16:9", resolution: str = "1K", images: List[dict] = []) -> tuple[str, str, str, str]:
     primary_model = settings.GEMINI_IMAGE_MODEL
     fallback_model = settings.GEMINI_IMAGE_FALLBACK_MODEL
 
@@ -149,24 +153,24 @@ async def generate_image(prompt: str, aspect_ratio: str = "16:9", resolution: st
     clean_resolution = resolution.upper() if resolution else "1K"
 
     try:
-        image_b64, mime_type = await _generate_image_with_model(
+        image_b64, mime_type, api_key = await _generate_image_with_model(
             prompt=prompt, 
             aspect_ratio=aspect_ratio, 
             resolution=clean_resolution,
             model=primary_model, 
             images=images
         )
-        return image_b64, mime_type, primary_model
+        return image_b64, mime_type, primary_model, api_key
     except httpx.HTTPStatusError as e:
         if e.response.status_code == 404 and fallback_model and fallback_model != primary_model:
-            image_b64, mime_type = await _generate_image_with_model(
+            image_b64, mime_type, api_key = await _generate_image_with_model(
                 prompt=prompt, 
                 aspect_ratio=aspect_ratio, 
                 resolution=clean_resolution,
                 model=fallback_model, 
                 images=images
             )
-            return image_b64, mime_type, fallback_model
-        raise Exception(f"Gemini API Error: {e.response.text}")
+            return image_b64, mime_type, fallback_model, api_key
+        raise Exception(f"Gemini API Error ({settings.GOOGLE_API_BASE_URL}): {e.response.text}")
     except Exception as e:
-        raise Exception(f"Gemini Gen Service Error: {str(e)}")
+        raise Exception(f"Gemini Gen Service Error ({settings.GOOGLE_API_BASE_URL}): {str(e)}")

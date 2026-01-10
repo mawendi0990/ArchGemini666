@@ -8,7 +8,7 @@ if not exist "frontend\node_modules" (
 echo Starting ArchGemini...
 
 :: Start Backend
-start "ArchGemini Backend" cmd /k "cd backend && uv run uvicorn app:app --reload"
+start "ArchGemini Backend" cmd /k "cd backend && uv run python -m uvicorn app:app --reload"
 
 :: Start Frontend (React + Electron)
 start "ArchGemini Frontend" cmd /k "cd frontend && npm run dev"

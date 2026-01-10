@@ -21,7 +21,7 @@ if not exist "frontend" (
 )
 
 echo [1/2] Starting Backend (FastAPI)...
-start "ArchGemini Backend" cmd /k "cd backend && uv run uvicorn app:app --reload --host 0.0.0.0"
+start "ArchGemini Backend" cmd /k "cd backend && uv run python -m uvicorn app:app --reload --host 0.0.0.0"
 
 echo [2/2] Starting Frontend (Electron + React)...
 start "ArchGemini Frontend" cmd /k "cd frontend && npm run dev"

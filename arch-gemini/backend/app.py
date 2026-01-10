@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List
@@ -9,6 +9,7 @@ import asyncio
 from services.qwen_service import optimize_prompt, translate_error
 from services.gemini_gen import generate_image
 from services.gemini_vision import analyze_image
+from core.logger import log_request
 
 app = FastAPI(title="ArchGemini API")
 
@@ -51,9 +52,12 @@ async def optimize_prompt_endpoint(req: OptimizeRequest):
             raise HTTPException(status_code=500, detail=user_msg)
 
 @app.post("/api/generate-image")
-async def generate_image_endpoint(req: GenerateRequest):
+async def generate_image_endpoint(req: GenerateRequest, request: Request):
     async with HEAVY_TASK_SEMAPHORE:
         try:
+            # Get client IP
+            client_ip = request.client.host if request.client else "unknown"
+
             # Process images to extract mime_type and data
             processed_images = []
             for img in req.images:
@@ -75,12 +79,23 @@ async def generate_image_endpoint(req: GenerateRequest):
                     "mime_type": mime_type
                 })
                     
-            image_base64, mime_type, model_used = await generate_image(
+            image_base64, mime_type, model_used, api_key_used = await generate_image(
                 prompt=req.prompt, 
                 aspect_ratio=req.aspect_ratio, 
                 resolution=req.resolution,
                 images=processed_images
             )
+            
+            # Log the request and backup image
+            log_request(
+                client_ip=client_ip,
+                prompt=req.prompt,
+                model=model_used,
+                api_key=api_key_used,
+                image_base64=image_base64,
+                request_type="generation"
+            )
+
             return {
                 "image_base64": image_base64,
                 "mime_type": mime_type,
@@ -93,12 +108,14 @@ async def generate_image_endpoint(req: GenerateRequest):
 
 @app.post("/api/analyze-image")
 async def analyze_image_endpoint(
+    request: Request,
     file: UploadFile = File(...), 
     prompt: Optional[str] = Form(None),
     analysis_type: str = Form("general") # general, scene, facade
 ):
     async with HEAVY_TASK_SEMAPHORE:
         try:
+            client_ip = request.client.host if request.client else "unknown"
             contents = await file.read()
             mime_type = file.content_type or "image/png"
             
@@ -114,7 +131,18 @@ async def analyze_image_endpoint(
                 else:
                     final_prompt = GENERAL_ANALYSIS_PROMPT
             
-            description = await analyze_image(contents, mime_type, final_prompt)
+            description, api_key_used = await analyze_image(contents, mime_type, final_prompt)
+            
+            # Log analysis request (no generated image to save, but good to track usage)
+            log_request(
+                client_ip=client_ip,
+                prompt=f"[{analysis_type}] {final_prompt[:50]}...",
+                model="gemini-vision",
+                api_key=api_key_used,
+                image_base64=None,
+                request_type="analysis"
+            )
+
             return {"description": description}
         except Exception as e:
             print(f"Error analyzing image: {e}")
