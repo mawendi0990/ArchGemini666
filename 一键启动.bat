@@ -21,7 +21,9 @@ if not exist "frontend" (
 )
 
 echo [1/2] Starting Backend (FastAPI)...
-start "ArchGemini Backend" cmd /k "cd backend && uv run python -m uvicorn app:app --reload --host 0.0.0.0"
+if "%BACKEND_HOST%"=="" set "BACKEND_HOST=0.0.0.0"
+if "%BACKEND_PORT_FALLBACKS%"=="" set "BACKEND_PORT_FALLBACKS=18000 18001 50000 50001 8000"
+start "ArchGemini Backend" cmd /k "cd backend && setlocal EnableDelayedExpansion && set HOST=%BACKEND_HOST% && set PORTS=%BACKEND_PORT_FALLBACKS% && for %%P in (!PORTS!) do (echo [Backend] Try http://!HOST!:%%P && uv run python -m uvicorn app:app --reload --host !HOST! --port %%P && exit /b 0) && echo [Backend] All ports failed. Try set BACKEND_PORT_FALLBACKS=18000 18001 50000 && pause"
 
 echo [2/2] Starting Frontend (Electron + React)...
 start "ArchGemini Frontend" cmd /k "cd frontend && npm run dev"
