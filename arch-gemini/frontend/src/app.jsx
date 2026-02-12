@@ -4,12 +4,15 @@ import PromptOptimizer from './components/PromptOptimizer';
 import ImageGenerator from './components/ImageGenerator';
 import ImageUploader from './components/ImageUploader';
 import HistorySidebar from './components/HistorySidebar';
-import { Layout, PenTool, Image as ImageIcon, Layers, Sun, Moon } from 'lucide-react';
+import TemplateGallery from './pages/TemplateGallery';
+import { Layout, PenTool, Image as ImageIcon, Layers, Sun, Moon, Sparkles, X } from 'lucide-react';
 
 function App() {
     const [mode, setMode] = useState("text"); // text | sketch | composition
     const [theme, setTheme] = useState("dark"); // dark | light
     const [historyRefreshTrigger, setHistoryRefreshTrigger] = useState(0);
+    const [showTemplateGallery, setShowTemplateGallery] = useState(false);
+    const [selectedTemplate, setSelectedTemplate] = useState(null);
 
     // Initialize theme from localStorage or system preference
     useEffect(() => {
@@ -79,6 +82,20 @@ function App() {
             case 'composition': return "创意组合模式";
             default: return "渲染模式";
         }
+    };
+
+    // Handle template application
+    const handleApplyTemplate = (template) => {
+        setSelectedTemplate(template);
+        // Set prompt from template
+        const basePrompt = template.promptTemplate.replace('{prompt}', '').trim();
+        setPrompt(basePrompt);
+        setShowTemplateGallery(false);
+    };
+
+    // Close template gallery and clear selection
+    const handleCloseTemplateGallery = () => {
+        setShowTemplateGallery(false);
     };
 
     return (
@@ -166,6 +183,7 @@ function App() {
                                     label="上传组合素材 (风格/材质)"
                                     allowAnalysis={true}
                                     onAnalyze={handleAnalysis}
+                                    showImageNumbers={true}
                                 />
                             )}
 
@@ -211,14 +229,37 @@ function App() {
                 <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-apple-blue/5 via-transparent to-transparent pointer-events-none"></div>
 
                 <header className="px-8 py-6 flex justify-between items-center z-10 border-b border-apple-gray-200 dark:border-white/5 bg-white/50 dark:bg-neutral-900/30 backdrop-blur-xl shrink-0">
-                    <h2 className="text-lg font-medium text-apple-gray-900 dark:text-white flex items-center gap-3">
-                        <span className="relative flex h-2.5 w-2.5">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-                        </span>
-                        渲染画布
-                    </h2>
-                    <div className="text-xs font-mono text-apple-gray-500 dark:text-apple-gray-400 bg-apple-gray-100 dark:bg-white/5 px-3 py-1 rounded-full">v0.2.2 Beta</div>
+                    <div className="flex items-center gap-4">
+                        <h2 className="text-lg font-medium text-apple-gray-900 dark:text-white flex items-center gap-3">
+                            <span className="relative flex h-2.5 w-2.5">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                            </span>
+                            渲染画布
+                        </h2>
+                        {selectedTemplate && (
+                            <div className="flex items-center gap-2 px-3 py-1 bg-apple-blue/10 text-apple-blue rounded-full text-xs">
+                                <Sparkles className="w-3 h-3" />
+                                <span>{selectedTemplate.name}</span>
+                                <button
+                                    onClick={() => setSelectedTemplate(null)}
+                                    className="hover:text-apple-blue/70"
+                                >
+                                    <X className="w-3 h-3" />
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setShowTemplateGallery(true)}
+                            className="flex items-center gap-2 px-4 py-2 bg-apple-blue/10 text-apple-blue rounded-lg text-sm font-medium hover:bg-apple-blue/20 transition-colors"
+                        >
+                            <Sparkles className="w-4 h-4" />
+                            模板画廊
+                        </button>
+                        <div className="text-xs font-mono text-apple-gray-500 dark:text-apple-gray-400 bg-apple-gray-100 dark:bg-white/5 px-3 py-1 rounded-full">v0.2.2 Beta</div>
+                    </div>
                 </header>
 
                 <div className="flex-1 p-8 z-10 flex items-center justify-center overflow-hidden">
@@ -237,6 +278,18 @@ function App() {
 
             {/* History Sidebar */}
             <HistorySidebar refreshTrigger={historyRefreshTrigger} />
+
+            {/* Template Gallery Modal */}
+            {showTemplateGallery && (
+                <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm">
+                    <div className="h-full w-full max-w-6xl mx-auto">
+                        <TemplateGallery
+                            onApplyTemplate={handleApplyTemplate}
+                            onClose={handleCloseTemplateGallery}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

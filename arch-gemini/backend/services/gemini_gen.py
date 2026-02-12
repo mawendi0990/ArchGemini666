@@ -42,6 +42,49 @@ def _extract_inline_image_part(result: dict) -> tuple[str, str]:
 
 from typing import Any, Dict, List, Union
 
+# Gemini API 支持的最大图片数量
+MAX_IMAGES_LIMIT = 14
+
+
+def _validate_image_count(images: List[Any]) -> None:
+    """验证图片数量不超过Gemini API限制"""
+    if len(images) > MAX_IMAGES_LIMIT:
+        raise ValueError(f"图片数量超出限制。最多支持 {MAX_IMAGES_LIMIT} 张图片，当前传入了 {len(images)} 张。")
+
+
+def _get_image_role_name(role_id: str) -> str:
+    """获取图片角色的中文名称"""
+    role_names = {
+        "style": "风格参考",
+        "composition": "构图参考",
+        "material": "材质参考",
+        "color": "色彩参考",
+        "lighting": "光照参考",
+        "custom": "自定义参考"
+    }
+    return role_names.get(role_id, "参考")
+
+
+def _build_image_reference_text(images: List[Dict[str, Any]]) -> str:
+    """
+    构建图片序号和角色说明文本
+
+    当传入的图片包含role信息时，自动生成图片序号说明
+    """
+    if not images:
+        return ""
+
+    references = []
+    for idx, img in enumerate(images, start=1):
+        role = img.get("role", "custom") if isinstance(img, dict) else "custom"
+        role_name = _get_image_role_name(role)
+        references.append(f"- 图片{idx}：[{role_name}]")
+
+    if references:
+        return "\n参考：\n" + "\n".join(references)
+    return ""
+
+
 async def _generate_image_with_model(
     prompt: str,
     aspect_ratio: str,
@@ -49,6 +92,29 @@ async def _generate_image_with_model(
     model: str,
     images: List[Union[str, Dict[str, Any]]] = [],
 ) -> tuple[str, str, str]:
+    """
+    使用指定模型生成图像
+
+    Args:
+        prompt: 提示词（可以包含图片序号说明）
+        aspect_ratio: 宽高比 (1:1, 3:2, 2:3, 3:4, 4:3, 16:9, 21:9)
+        resolution: 分辨率 (1K, 2K, 4K)
+        model: 模型名称
+        images: 图片列表，每项可以是 base64 字符串或包含 {"data": base64, "role": "style"} 的字典
+
+    Returns:
+        (base64_image_data, mime_type, api_key)
+    """
+    # 验证图片数量
+    _validate_image_count(images)
+
+    # 如果图片包含role信息，打印日志便于调试
+    if images:
+        for idx, img in enumerate(images, start=1):
+            if isinstance(img, dict) and "role" in img:
+                role_name = _get_image_role_name(img["role"])
+                print(f"[GeminiGen] 图片{idx} 角色: {role_name}")
+
     # Use dynamic key rotation
     api_key = settings.get_google_api_key()
     if not api_key:
@@ -162,6 +228,10 @@ async def generate_image(prompt: str, aspect_ratio: str = "16:9", resolution: st
         )
         return image_b64, mime_type, primary_model, api_key
     except httpx.HTTPStatusError as e:
+        error_content = e.response.text
+        if "<!DOCTYPE html>" in error_content or "cloudflare" in error_content.lower():
+             raise Exception("代理服务异常 (Cloudflare Error): 目标 Worker 出现 500/502 错误，请检查反代地址是否可用。")
+
         if e.response.status_code == 404 and fallback_model and fallback_model != primary_model:
             image_b64, mime_type, api_key = await _generate_image_with_model(
                 prompt=prompt, 

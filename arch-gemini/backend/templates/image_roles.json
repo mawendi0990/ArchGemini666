@@ -1,0 +1,82 @@
+{
+  "version": "1.0.0",
+  "description": "ArchGemini 图片角色定义配置",
+  "roles": [
+    {
+      "id": "style",
+      "name": "风格参考",
+      "prompt": "风格参考",
+      "description": "用作整体建筑风格、设计语言和美学参考",
+      "icon": "palette",
+      "color": "#8B5CF6",
+      "examples": ["现代简约", "北欧风格", "工业风格", "新中式"]
+    },
+    {
+      "id": "composition",
+      "name": "构图参考",
+      "prompt": "构图参考",
+      "description": "用作空间布局、形体组织和构图方式参考",
+      "icon": "layout",
+      "color": "#3B82F6",
+      "examples": ["对称布局", "错层布局", "开放平面", "流线型"]
+    },
+    {
+      "id": "material",
+      "name": "材质参考",
+      "prompt": "材质参考",
+      "description": "用作建筑材料、质感和细节处理参考",
+      "icon": "texture",
+      "color": "#F59E0B",
+      "examples": ["清水混凝土", "木材纹理", "金属板", "玻璃幕墙"]
+    },
+    {
+      "id": "color",
+      "name": "色彩参考",
+      "prompt": "色彩参考",
+      "description": "用作配色方案和色彩氛围参考",
+      "icon": "droplet",
+      "color": "#EC4899",
+      "examples": ["暖色调", "冷色调", "中性色", "渐变色"]
+    },
+    {
+      "id": "lighting",
+      "name": "光照参考",
+      "prompt": "光照参考",
+      "description": "用作光线方向、强度和氛围参考",
+      "icon": "sun",
+      "color": "#FBBF24",
+      "examples": ["自然光", "人工光", "侧光", "逆光"]
+    },
+    {
+      "id": "custom",
+      "name": "自定义",
+      "prompt": "参考",
+      "description": "自定义参考，由用户指定具体用途",
+      "icon": "edit",
+      "color": "#6B7280",
+      "examples": ["用户自定义"]
+    }
+  ],
+  "roleCombinations": [
+    {
+      "name": "风格+构图",
+      "description": "最常见的组合，用于确定建筑风格和空间布局",
+      "roles": ["style", "composition"]
+    },
+    {
+      "name": "风格+材质",
+      "description": "专注于建筑风格表达和材料质感",
+      "roles": ["style", "material"]
+    },
+    {
+      "name": "完整参考",
+      "description": "包含风格、构图、材质和光照的完整参考",
+      "roles": ["style", "composition", "material", "lighting"]
+    },
+    {
+      "name": "室内设计",
+      "description": "适用于室内空间设计",
+      "roles": ["composition", "material", "color", "lighting"]
+    }
+  ]
+}

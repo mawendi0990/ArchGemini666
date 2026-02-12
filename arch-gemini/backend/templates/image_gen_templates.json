@@ -1,0 +1,179 @@
+{
+  "version": "1.0.0",
+  "description": "ArchGemini 图像生成模板配置",
+  "categories": {
+    "style": {
+      "id": "style",
+      "name": "风格类",
+      "description": "建筑风格参考模板"
+    },
+    "scene": {
+      "id": "scene",
+      "name": "场景类",
+      "description": "建筑场景类型模板"
+    },
+    "effect": {
+      "id": "effect",
+      "name": "效果类",
+      "description": "光照和氛围效果模板"
+    }
+  },
+  "templates": [
+    {
+      "id": "style_modern",
+      "categoryId": "style",
+      "name": "现代简约风格",
+      "description": "现代简约建筑风格，强调线条简洁和功能主义",
+      "promptTemplate": "{prompt}, 参考 图片1 的现代简约风格，采用图片2 的空间布局。专业建筑渲染，高清，细节丰富",
+      "minImages": 1,
+      "maxImages": 3,
+      "defaultRoles": ["style", "composition"],
+      "previewDescription": "适用于现代办公楼、住宅、商业建筑设计",
+      "tags": ["现代", "简约", "建筑"]
+    },
+    {
+      "id": "style_nordic",
+      "categoryId": "style",
+      "name": "北欧风格",
+      "description": "北欧建筑风格，注重自然材质和舒适氛围",
+      "promptTemplate": "{prompt}, 北欧风格，参考 图片1 的色调和材质，参考 图片2 的空间比例。专业建筑渲染，高清，细节丰富",
+      "minImages": 1,
+      "maxImages": 3,
+      "defaultRoles": ["style", "composition"],
+      "previewDescription": "适用于住宅、室内空间设计",
+      "tags": ["北欧", "温馨", "自然"]
+    },
+    {
+      "id": "style_industrial",
+      "categoryId": "style",
+      "name": "工业风格",
+      "description": "工业风格建筑，强调裸露结构和原始质感",
+      "promptTemplate": "{prompt}, 工业风格，参考 图片1 的裸露结构和质感，参考 图片2 的空间布局。专业建筑渲染，高清，细节丰富",
+      "minImages": 1,
+      "maxImages": 3,
+      "defaultRoles": ["style", "composition"],
+      "previewDescription": "适用于loft、改造空间、创意园区设计",
+      "tags": ["工业", "loft", "改造"]
+    },
+    {
+      "id": "style_traditional_chinese",
+      "categoryId": "style",
+      "name": "新中式风格",
+      "description": "新中式建筑风格，融合传统元素与现代设计",
+      "promptTemplate": "{prompt}, 新中式风格，参考 图片1 的传统元素和色彩，参考 图片2 的空间布局。专业建筑渲染，高清，细节丰富",
+      "minImages": 1,
+      "maxImages": 3,
+      "defaultRoles": ["style", "composition"],
+      "previewDescription": "适用于中式住宅、茶室、文化空间设计",
+      "tags": ["中式", "传统", "文化"]
+    },
+    {
+      "id": "scene_facade",
+      "categoryId": "scene",
+      "name": "建筑立面",
+      "description": "建筑外立面设计模板",
+      "promptTemplate": "建筑立面设计，{prompt}。图片1 作为立面风格参考，图片2 作为比例参考。专业建筑渲染，高清，细节丰富",
+      "minImages": 1,
+      "maxImages": 4,
+      "defaultRoles": ["style", "composition", "material"],
+      "previewDescription": "专注于建筑外立面的设计和表达",
+      "tags": ["立面", "外观", "建筑"]
+    },
+    {
+      "id": "scene_interior",
+      "categoryId": "scene",
+      "name": "室内空间",
+      "description": "室内空间设计模板",
+      "promptTemplate": "室内渲染，{prompt}。图片1 作为家具布局参考，图片2 作为灯光氛围参考，图片3 作为材质质感参考。专业建筑渲染，高清，细节丰富",
+      "minImages": 1,
+      "maxImages": 5,
+      "defaultRoles": ["composition", "lighting", "material"],
+      "previewDescription": "专注于室内空间的家具、灯光和材质设计",
+      "tags": ["室内", "渲染", "空间"]
+    },
+    {
+      "id": "scene_landscape",
+      "categoryId": "scene",
+      "name": "景观设计",
+      "description": "景观园林设计模板",
+      "promptTemplate": "景观设计，{prompt}。图片1 作为种植风格参考，图片2 作为硬质铺装参考。专业建筑渲染，高清，细节丰富",
+      "minImages": 1,
+      "maxImages": 4,
+      "defaultRoles": ["style", "material"],
+      "previewDescription": "专注于景观和园林设计",
+      "tags": ["景观", "园林", "绿化"]
+    },
+    {
+      "id": "scene_plaza",
+      "categoryId": "scene",
+      "name": "城市广场",
+      "description": "城市公共空间设计模板",
+      "promptTemplate": "城市广场设计，{prompt}。图片1 作为空间布局参考，图片2 作为铺装材料参考。专业建筑渲染，高清，细节丰富",
+      "minImages": 1,
+      "maxImages": 4,
+      "defaultRoles": ["composition", "material"],
+      "previewDescription": "适用于城市广场、公共空间设计",
+      "tags": ["广场", "公共空间", "城市"]
+    },
+    {
+      "id": "effect_morning",
+      "categoryId": "effect",
+      "name": "清晨光照",
+      "description": "清晨自然光效果模板",
+      "promptTemplate": "{prompt}, 清晨自然光效果，参考 图片1 的光影方向。柔和的晨光，清新的氛围。专业建筑渲染，高清，细节丰富",
+      "minImages": 1,
+      "maxImages": 2,
+      "defaultRoles": ["lighting"],
+      "previewDescription": "模拟清晨柔和的自然光线",
+      "tags": ["清晨", "自然光", "柔和"]
+    },
+    {
+      "id": "effect_sunset",
+      "categoryId": "effect",
+      "name": "黄金时刻",
+      "description": "日落黄金时刻光线效果",
+      "promptTemplate": "{prompt}, 日落黄金时刻光线，参考 图片1 的暖色调。温暖的金色光线，长阴影效果。专业建筑渲染，高清，细节丰富",
+      "minImages": 1,
+      "maxImages": 2,
+      "defaultRoles": ["color", "lighting"],
+      "previewDescription": "模拟日落时分的金色光线",
+      "tags": ["日落", "黄金时刻", "暖色"]
+    },
+    {
+      "id": "effect_rainy",
+      "categoryId": "effect",
+      "name": "雨天氛围",
+      "description": "雨天湿润氛围效果",
+      "promptTemplate": "{prompt}, 雨天氛围，参考 图片1 的湿润质感和反射效果。阴天柔和光线，湿润表面反射。专业建筑渲染，高清，细节丰富",
+      "minImages": 1,
+      "maxImages": 2,
+      "defaultRoles": ["material", "lighting"],
+      "previewDescription": "模拟雨天的湿润质感和反射效果",
+      "tags": ["雨天", "湿润", "反射"]
+    },
+    {
+      "id": "effect_night",
+      "categoryId": "effect",
+      "name": "夜景效果",
+      "description": "夜间人工照明效果",
+      "promptTemplate": "{prompt}, 夜景效果，参考 图片1 的灯光布置。夜晚人工照明，温暖的室内光外溢，对比强烈的城市夜景。专业建筑渲染，高清，细节丰富",
+      "minImages": 1,
+      "maxImages": 2,
+      "defaultRoles": ["lighting"],
+      "previewDescription": "模拟夜间人工照明效果",
+      "tags": ["夜景", "灯光", "城市"]
+    },
+    {
+      "id": "effect_overcast",
+      "categoryId": "effect",
+      "name": "阴天漫射",
+      "description": "阴天漫射光线效果",
+      "promptTemplate": "{prompt}, 阴天漫射光线效果，参考 图片1 的柔和光影。均匀的漫射光，低对比度，柔和的阴影。专业建筑渲染，高清，细节丰富",
+      "minImages": 1,
+      "maxImages": 2,
+      "defaultRoles": ["lighting"],
+      "previewDescription": "模拟阴天的柔和漫射光线",
+      "tags": ["阴天", "漫射光", "柔和"]
+    }
+  ]
+}
