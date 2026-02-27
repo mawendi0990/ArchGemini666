@@ -49,3 +49,11 @@ out/
 
 # Local/Private Configs
 # If there are any local config files that shouldn't be shared
+
+# Application Data (History, Cache)
+arch-gemini/backend/history.db
+arch-gemini/backend/history_images/
+arch-gemini/backend/*.db
+
+# Claude Code
+.claude/

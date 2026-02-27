@@ -207,23 +207,38 @@ async def _analyze_reference_images(images: List[str]) -> str:
         
     return "\n\n【参考图像分析】:\n" + "\n".join(descriptions)
 
-async def generate_image(prompt: str, aspect_ratio: str = "16:9", resolution: str = "1K", images: List[dict] = []) -> tuple[str, str, str, str]:
-    primary_model = settings.GEMINI_IMAGE_MODEL
+async def generate_image(prompt: str, aspect_ratio: str = "16:9", resolution: str = "1K", images: List[dict] = [], model: str = None) -> tuple[str, str, str, str]:
+    """
+    生成图像
+
+    Args:
+        prompt: 提示词
+        aspect_ratio: 宽高比
+        resolution: 分辨率 (1K, 2K, 4K)
+        images: 参考图片列表
+        model: 可选，指定使用的模型 (如 gemini-3-pro-image-preview, gemini-3.1-flash-image-preview)
+               如果不指定，使用配置文件中的默认模型
+
+    Returns:
+        (image_base64, mime_type, model_used, api_key_used)
+    """
+    # 使用指定的模型，如果没有指定则使用默认模型
+    primary_model = model or settings.GEMINI_IMAGE_MODEL
     fallback_model = settings.GEMINI_IMAGE_FALLBACK_MODEL
 
     # Use explicit imageSize parameter for Gemini 3 Pro
     # Ref: https://ai.google.dev/gemini-api/docs/image-generation?hl=zh-cn
     # Valid values: "1K", "2K", "4K"
-    
+
     # Ensure resolution is uppercase just in case
     clean_resolution = resolution.upper() if resolution else "1K"
 
     try:
         image_b64, mime_type, api_key = await _generate_image_with_model(
-            prompt=prompt, 
-            aspect_ratio=aspect_ratio, 
+            prompt=prompt,
+            aspect_ratio=aspect_ratio,
             resolution=clean_resolution,
-            model=primary_model, 
+            model=primary_model,
             images=images
         )
         return image_b64, mime_type, primary_model, api_key

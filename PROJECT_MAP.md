@@ -1,80 +1,204 @@
-# ArchGemini 项目全景地图 (Project Map)
+# ArchGemini 项目地图
 
-ArchGemini 是一个基于 **FastAPI (Python)** 和 **Electron + React** 的本地建筑效果图生成工具，集成了 Google Gemini (用于图像生成与视觉分析) 和 阿里 Qwen (用于提示词优化与翻译)。
-
-## 🏗️ 项目概览 (Project Overview)
-ArchGemini 旨在辅助建筑设计师通过 AI 生成效果图。它支持三种核心模式：
-1.  **文生图 (Text-to-Image)**: 通过文字描述生成建筑图像。
-2.  **草图/模型渲染 (Sketch-to-Image)**: 基于上传的草图或模型截图生成渲染图。
-3.  **创意组合 (Composition)**: 结合多张参考图进行创意生成。
+> **最后更新**: 2026-02-11
+> **项目路径**: `I:\ArchGemini666`
+> **用途**: AI 建筑效果图生成辅助工具
 
 ---
 
-## 📂 文件结构与功能说明 (File Structure Map)
+## 项目简介
 
-### 1. 根目录 (`/`)
-*   `一键启动.bat`: **用户入口**。自动检测环境，首次运行会调用 `setup.bat`，之后启动前后端服务。
-*   `arch-gemini/`: 项目源码主目录。
+ArchGemini 是一个桌面应用程序，帮助建筑设计师通过 AI 生成和优化效果图。
 
-### 2. 后端 (`arch-gemini/backend/`)
-基于 FastAPI 框架，负责核心业务逻辑与 AI 模型调用。
-*   `app.py`: **后端入口**。
-    *   定义 API 路由 (`/api/optimize-prompt`, `/api/generate-image`, `/api/analyze-image`)。
-    *   使用 `HEAVY_TASK_SEMAPHORE` 限制并发任务数 (最大 10)。
-*   `core/`: 核心配置与工具。
-    *   `config.py`: 加载 `.env` 配置，定义模型名称 (Gemini 3 Pro, Qwen Plus) 和 API Key。
-    *   `http_client.py`: 统一的 HTTP 客户端配置。
-*   `services/`: 业务逻辑封装。
-    *   `gemini_gen.py`: **图像生成服务**。调用 Gemini API 生成图像，处理 Base64 图片输入（图生图），包含 fallback 机制（主模型失败切换备用模型）。
-    *   `gemini_vision.py`: **视觉分析服务**。使用 Gemini Vision 模型分析上传的图片（场景、立面等），生成描述词。
-    *   `qwen_service.py`: **语言模型服务**。调用 Qwen 优化提示词，并将英文错误信息翻译为中文。
-*   `prompts.py`: 存放系统级提示词 (System Prompts) 和负面提示词 (Negative Prompts)。
-*   `analysis_prompts.py`: 存放不同分析模式（场景、立面）的专用提示词。
+**核心功能**:
+| 模式 | 说明 |
+|------|------|
+| 文生图 | 输入文字描述，生成建筑效果图 |
+| 草图渲染 | 上传草图/模型截图，生成精细渲染图 |
+| 创意组合 | 上传多张参考图，结合提示词生成新设计 |
 
-### 3. 前端 (`arch-gemini/frontend/`)
-基于 React (Vite) 构建 UI，并使用 Electron 封装为桌面应用。
-*   `electron/`:
-    *   `main.js`: Electron 主进程，创建窗口，加载 React 应用。
-*   `src/`: React 源码。
-    *   `app.jsx`: **主组件**。管理三种模式的状态 (`text`, `sketch`, `composition`)，处理图片上传与分析回调。
-    *   `components/`:
-        *   `PromptOptimizer.jsx`: 提示词优化组件。
-        *   `ImageGenerator.jsx`: 图片生成与展示组件。
-        *   `ImageUploader.jsx`: 图片上传组件。
-        *   `HistorySidebar.jsx`: 历史记录侧边栏。
+**模型选择**: 支持 Flash（快速生成）和 Pro（高质量）两种模式切换 |
 
 ---
 
-## 🚀 核心功能链路 (Key Capabilities Flow)
+## 技术栈
 
-### A. 图像生成 (Generate Image)
-*   **路由**: `POST /api/generate-image`
-*   **流程**: 前端发送 Prompt + 图片(可选) -> `app.py` 接收 -> 调用 `gemini_gen.py` -> Google Gemini API (`v1beta/models/...:generateContent`)。
-*   **特性**: 支持分辨率选择 (1K, 2K, 4K)，自动追加负面提示词，支持 Base64 图片作为参考（图生图）。
-
-### B. 图片分析 (Analyze Image)
-*   **路由**: `POST /api/analyze-image`
-*   **流程**: 用户上传图片 -> 选择分析类型 (General/Scene/Facade) -> `app.py` 选择对应 Prompt -> 调用 `gemini_vision.py` -> Google Gemini Vision API。
-*   **结果**: 返回图片描述，前端自动追加到当前提示词框中。
-
-### C. 提示词优化 (Optimize Prompt)
-*   **路由**: `POST /api/optimize-prompt`
-*   **流程**: 用户输入简单词 -> `app.py` -> 调用 `qwen_service.py` -> 阿里 Qwen API。
-*   **作用**: 将简单的建筑描述扩写为专业的渲染提示词 (包含光照、材质、风格等细节)。
-
-### D. 错误处理与翻译
-*   **机制**: 当后端发生异常时，捕获错误信息 -> 调用 `qwen_service.py` 的 `translate_error` -> 返回中文友好的错误提示给前端。
+| 层级 | 技术 |
+|------|------|
+| 后端 | Python + FastAPI |
+| 前端 | React + Vite + Tailwind CSS |
+| 桌面 | Electron |
+| AI 模型 | Gemini (图像), Qwen (文本) |
 
 ---
 
-## ⚙️ 关键配置 (Configuration)
-位于 `.env` (由 `core/config.py` 加载):
-*   `GOOGLE_API_KEY`: 用于 Gemini 图像生成与视觉分析。
-*   `QWEN_API_KEY`: 用于提示词优化与错误翻译。
-*   `GEMINI_IMAGE_MODEL`: 默认 `gemini-3-pro-image-preview`。
-*   `QWEN_MODEL`: 默认 `qwen-plus`。
+## 目录结构
 
-## 🐞 调试建议 (Debugging Tips)
-1.  **启动失败**: 检查 `一键启动.bat` 输出，确保 Python 依赖 (`uv`) 和 Node 依赖 (`npm`) 已安装。
-2.  **生成报错**: 检查 `backend` 控制台输出。如果是 API 错误，通常会被 Qwen 翻译，但原始错误日志会在控制台打印。
-3.  **模型切换**: 如遇 Gemini API 404 或限流，可在 `.env` 中修改 `GEMINI_IMAGE_MODEL` 或配置 `GEMINI_IMAGE_FALLBACK_MODEL`。
+```
+ArchGemini666/
+│
+├── .env                          # 环境配置（API密钥、模型、代理）
+├── 一键启动.bat                   # 启动脚本
+├── PROJECT_MAP.md                # 本文档
+│
+└── arch-gemini/                  # 主应用目录
+    │
+    ├── backend/                  # Python 后端
+    │   ├── app.py               # FastAPI 入口 (端口 18000)
+    │   ├── requirements.txt     # Python 依赖
+    │   │
+    │   ├── core/                # 核心模块
+    │   │   ├── config.py        # 配置加载，多 Key 轮询逻辑
+    │   │   ├── http_client.py   # HTTP 客户端
+    │   │   └── logger.py        # 日志配置
+    │   │
+    │   ├── services/            # AI 服务
+    │   │   ├── gemini_gen.py    # Gemini 图像生成
+    │   │   ├── gemini_vision.py # Gemini 图像分析
+    │   │   └── qwen_service.py  # Qwen 提示词优化
+    │   │
+    │   └── prompts.py           # 系统提示词 & 负面提示词
+    │
+    └── frontend/                 # React 前端
+        ├── package.json
+        ├── vite.config.js
+        ├── tailwind.config.js
+        │
+        ├── electron/main.js      # Electron 主进程
+        │
+        └── src/
+            ├── app.jsx           # 根组件
+            ├── index.css
+            │
+            └── components/
+                ├── HistorySidebar.jsx      # 历史记录
+                ├── ImageGenerator.jsx      # 图像生成
+                ├── ImageUploader.jsx       # 图片上传
+                ├── PromptOptimizer.jsx     # 提示词优化
+                └── ImageAnalyzer.jsx       # 图像分析
+```
+
+---
+
+## API 端点
+
+| 端点 | 方法 | 功能 | 调用模型 |
+|------|------|------|----------|
+| `/api/generate-image` | POST | 生成建筑效果图 | `gemini-3-pro-image-preview` |
+| `/api/analyze-image` | POST | 分析上传的图片 | `gemini-3-pro-image-preview` |
+| `/api/optimize-prompt` | POST | 优化用户提示词 | `qwen-plus` |
+| `/api/health` | GET | 健康检查 | - |
+
+---
+
+## AI 模型配置
+
+### 当前使用的模型
+
+```bash
+# 图像生成 (建筑效果图)
+GEMINI_IMAGE_MODEL=gemini-3-pro-image-preview
+
+# 图像分析 (参考图分析)
+GEMINI_VISION_MODEL=gemini-3-pro-image-preview
+
+# 提示词优化 (文本处理)
+QWEN_MODEL=qwen-plus
+```
+
+### 模型用途说明
+
+| 模型 | 用途 | 能力 |
+|------|------|------|
+| `gemini-3-pro-image-preview` | 图像生成/分析 | 文生图、图生图、图像理解 |
+| `qwen-plus` | 提示词优化 | 将简单描述扩写为专业渲染提示词 |
+
+---
+
+## 环境配置 (.env)
+
+```bash
+# API Keys (逗号分隔 = 轮询)
+GOOGLE_API_KEY=key1,key2,key3
+QWEN_API_KEY=your-qwen-key
+
+# 代理地址 (可选)
+GOOGLE_API_BASE_URL=https://your-proxy.workers.dev/
+QWEN_API_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
+
+# 模型 (可选，不填则使用默认值)
+GEMINI_IMAGE_MODEL=gemini-3-pro-image-preview
+GEMINI_IMAGE_FALLBACK_MODEL=        # 备用模型
+GEMINI_VISION_MODEL=gemini-3-pro-image-preview
+QWEN_MODEL=qwen-plus
+
+# 服务端口
+PORT=18000
+```
+
+### 配置特性
+
+- **多 Key 轮询**: `GOOGLE_API_KEY` 支持逗号分隔多个 Key，自动轮询分配
+- **代理支持**: 可配置 Cloudflare Workers 等反代地址
+- **备用模型**: 主模型失败时自动切换到备用模型
+
+---
+
+## 数据流
+
+### 图像生成流程
+```
+用户输入 → 提示词优化(可选) → 生成请求
+    ↓
+POST /api/generate-image
+    ↓
+gemini_gen.py (Key 轮询 → Gemini API)
+    ↓
+返回 Base64 图像 → 前端显示 → 保存历史
+```
+
+### 参考图分析流程
+```
+用户上传图片 → 选择分析模式
+    ↓
+POST /api/analyze-image
+    ↓
+gemini_vision.py (Gemini Vision API)
+    ↓
+返回描述文本 → 自动追加到提示词框
+```
+
+---
+
+## 关键代码位置
+
+| 功能 | 文件 | 行号/说明 |
+|------|------|-----------|
+| API 路由定义 | `backend/app.py` | 主入口 |
+| 模型配置默认值 | `backend/core/config.py` | 12-15 行 |
+| API Key 轮询逻辑 | `backend/core/config.py` | 26-34 行 |
+| 图像生成 | `backend/services/gemini_gen.py` | `generate_image()` |
+| 安全错误处理 | `backend/services/gemini_gen.py` | `_extract_inline_image_part()` |
+| 参考图分析 | `backend/services/gemini_gen.py` | `_analyze_reference_images()` |
+| 图像分析 | `backend/services/gemini_vision.py` | `analyze_image()` |
+| 提示词优化 | `backend/services/qwen_service.py` | |
+
+---
+
+## 常见问题排查
+
+| 问题 | 可能原因 | 解决方案 |
+|------|----------|----------|
+| 启动失败 | 依赖未安装 | 运行 `setup.bat` |
+| 生成报错 | API Key 无效 | 检查 `.env` 中的 Key |
+| 代理错误 | 反代地址不可用 | 更换 `GOOGLE_API_BASE_URL` |
+| SAFETY 错误 | 提示词被拦截 | 修改提示词内容 |
+| 端口占用 | 18000 被占用 | 修改 `.env` 中的 `PORT` |
+
+---
+
+## 维护日志
+
+| 日期 | 更改 |
+|------|------|
+| 2026-02-11 | 修正 .env 模型配置注释，重写项目地图 |

@@ -36,6 +36,7 @@ class GenerateRequest(BaseModel):
     resolution: str = "1K" # 1K, 2K, 4K
     images: List[str] = [] # List of base64 strings
     template_id: Optional[str] = None # 模板ID
+    model: Optional[str] = None # 模型选择 (可选，覆盖默认模型)
 
 class ImageWithRole(BaseModel):
     data: str  # base64 data
@@ -115,10 +116,11 @@ async def generate_image_endpoint(req: GenerateRequest, request: Request):
                 })
                     
             image_base64, mime_type, model_used, api_key_used = await generate_image(
-                prompt=req.prompt, 
-                aspect_ratio=req.aspect_ratio, 
+                prompt=req.prompt,
+                aspect_ratio=req.aspect_ratio,
                 resolution=req.resolution,
-                images=processed_images
+                images=processed_images,
+                model=req.model  # 使用前端指定的模型
             )
             
             # Log the request and backup image

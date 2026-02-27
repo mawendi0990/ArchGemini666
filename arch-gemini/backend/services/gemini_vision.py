@@ -55,6 +55,9 @@ async def analyze_image(image_bytes: bytes, mime_type: str = "image/png", prompt
                 raise Exception(f"Unexpected response structure: {str(result)[:200]}")
 
     except httpx.HTTPStatusError as e:
+        error_content = e.response.text
+        if "<!DOCTYPE html>" in error_content or "cloudflare" in error_content.lower():
+             raise Exception("代理服务异常 (Cloudflare Error): 目标 Worker 出现 500/502 错误，请检查反代地址是否可用。")
         raise Exception(f"Gemini API Error ({base_url}): {e.response.text}")
     except Exception as e:
         raise Exception(f"Gemini Vision Service Error ({base_url}): {str(e)}")

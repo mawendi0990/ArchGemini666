@@ -99,25 +99,28 @@ function App() {
     };
 
     return (
-        <div className="flex h-screen w-screen bg-apple-gray-50 dark:bg-black text-apple-gray-900 dark:text-apple-gray-100 overflow-hidden font-sans selection:bg-apple-blue/30 transition-colors duration-300">
+        <div className="flex h-screen w-screen bg-gradient-mesh text-apple-gray-900 dark:text-apple-gray-100 overflow-hidden font-sans selection:bg-apple-blue/30 transition-colors duration-300">
 
             {/* Sidebar */}
-            <div className="w-80 flex flex-col border-r border-black/5 dark:border-white/10 bg-white/50 dark:bg-black/50 backdrop-blur-2xl p-6 overflow-y-auto relative z-10 transition-colors duration-300">
+            <div className="w-80 flex flex-col border-r border-black/5 dark:border-white/10 glass-strong p-6 overflow-y-auto relative z-10 transition-colors duration-300">
+                {/* Decorative gradient line at top */}
+                <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-apple-blue via-aurora-purple to-aurora-pink"></div>
+
                 <div className="flex items-center justify-between mb-10">
-                    <div className="flex items-center gap-3 text-apple-blue">
-                        <div className="p-2 bg-apple-blue/10 rounded-xl">
-                            <Layout className="w-5 h-5" />
+                    <div className="flex items-center gap-3">
+                        <div className="p-2.5 bg-gradient-to-br from-apple-blue to-aurora-purple rounded-xl shadow-lg animate-pulse-glow">
+                            <Layout className="w-5 h-5 text-white" />
                         </div>
                         <h1 className="text-base font-semibold tracking-tight text-apple-gray-900 dark:text-white leading-tight">
-                            建筑创作中心<br />
-                            <span className="text-[10px] font-medium text-apple-gray-500 dark:text-apple-gray-400 font-normal">渲染图生成工具</span>
+                            <span className="text-gradient-blue">建筑创作中心</span><br />
+                            <span className="text-[10px] font-medium text-apple-gray-500 dark:text-apple-gray-400 font-normal">AI 渲染图生成工具</span>
                         </h1>
                     </div>
 
                     {/* Theme Toggle */}
                     <button
                         onClick={toggleTheme}
-                        className="p-2 rounded-full bg-apple-gray-100 dark:bg-white/10 text-apple-gray-500 dark:text-apple-gray-400 hover:text-apple-gray-900 dark:hover:text-white transition-colors"
+                        className="p-2 rounded-full bg-gradient-to-br from-apple-gray-100 to-apple-gray-200 dark:from-white/10 dark:to-white/5 text-apple-gray-500 dark:text-apple-gray-400 hover:text-apple-gray-900 dark:hover:text-white transition-all hover:scale-110 btn-press"
                     >
                         {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                     </button>
@@ -125,26 +128,26 @@ function App() {
 
                 <div className="space-y-10">
                     {/* Mode Selector */}
-                    <div className="flex bg-black/5 dark:bg-white/10 p-1 rounded-xl">
+                    <div className="flex bg-black/5 dark:bg-white/10 p-1.5 rounded-2xl shadow-inner">
                         <button
                             onClick={() => setMode('text')}
-                            className={`flex-1 flex flex-col items-center py-2.5 text-[10px] font-medium rounded-lg transition-all duration-300 ${mode === 'text' ? 'bg-white dark:bg-apple-gray-600 text-apple-blue dark:text-white shadow-sm scale-[1.02]' : 'text-apple-gray-500 dark:text-apple-gray-400 hover:text-apple-gray-900 dark:hover:text-white'}`}
+                            className={`flex-1 flex flex-col items-center py-3 text-[10px] font-medium rounded-xl transition-all duration-300 ${mode === 'text' ? 'bg-gradient-to-br from-white to-apple-gray-50 dark:from-apple-gray-600 dark:to-apple-gray-700 text-gradient-blue shadow-lg scale-[1.02]' : 'text-apple-gray-500 dark:text-apple-gray-400 hover:text-apple-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}`}
                         >
-                            <PenTool className="w-4 h-4 mb-1" />
+                            <PenTool className={`w-4 h-4 mb-1.5 ${mode === 'text' ? 'text-apple-blue' : ''}`} />
                             文生图
                         </button>
                         <button
                             onClick={() => setMode('sketch')}
-                            className={`flex-1 flex flex-col items-center py-2.5 text-[10px] font-medium rounded-lg transition-all duration-300 ${mode === 'sketch' ? 'bg-white dark:bg-apple-gray-600 text-apple-blue dark:text-white shadow-sm scale-[1.02]' : 'text-apple-gray-500 dark:text-apple-gray-400 hover:text-apple-gray-900 dark:hover:text-white'}`}
+                            className={`flex-1 flex flex-col items-center py-3 text-[10px] font-medium rounded-xl transition-all duration-300 ${mode === 'sketch' ? 'bg-gradient-to-br from-white to-apple-gray-50 dark:from-apple-gray-600 dark:to-apple-gray-700 text-gradient-blue shadow-lg scale-[1.02]' : 'text-apple-gray-500 dark:text-apple-gray-400 hover:text-apple-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}`}
                         >
-                            <ImageIcon className="w-4 h-4 mb-1" />
+                            <ImageIcon className={`w-4 h-4 mb-1.5 ${mode === 'sketch' ? 'text-apple-blue' : ''}`} />
                             草图渲染
                         </button>
                         <button
                             onClick={() => setMode('composition')}
-                            className={`flex-1 flex flex-col items-center py-2.5 text-[10px] font-medium rounded-lg transition-all duration-300 ${mode === 'composition' ? 'bg-white dark:bg-apple-gray-600 text-apple-blue dark:text-white shadow-sm scale-[1.02]' : 'text-apple-gray-500 dark:text-apple-gray-400 hover:text-apple-gray-900 dark:hover:text-white'}`}
+                            className={`flex-1 flex flex-col items-center py-3 text-[10px] font-medium rounded-xl transition-all duration-300 ${mode === 'composition' ? 'bg-gradient-to-br from-white to-apple-gray-50 dark:from-apple-gray-600 dark:to-apple-gray-700 text-gradient-blue shadow-lg scale-[1.02]' : 'text-apple-gray-500 dark:text-apple-gray-400 hover:text-apple-gray-900 dark:hover:text-white hover:bg-white/50 dark:hover:bg-white/5'}`}
                         >
-                            <Layers className="w-4 h-4 mb-1" />
+                            <Layers className={`w-4 h-4 mb-1.5 ${mode === 'composition' ? 'text-apple-blue' : ''}`} />
                             组合生成
                         </button>
                     </div>
@@ -198,7 +201,7 @@ function App() {
                     {/* Prompt Section */}
                     <section>
                         <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-xs uppercase text-apple-gray-400 dark:text-apple-gray-500 font-bold tracking-widest pl-1">提示词工程</h2>
+                            <h2 className="text-xs uppercase bg-gradient-to-r from-apple-blue to-aurora-purple bg-clip-text text-transparent font-bold tracking-widest pl-1">提示词工程</h2>
                             {mode === 'text' && (
                                 <ImageUploader
                                     label=""
@@ -214,36 +217,43 @@ function App() {
                     </section>
 
                     <div className="text-xs text-apple-gray-500 dark:text-apple-gray-400 mt-auto pt-8 border-t border-apple-gray-200 dark:border-white/5">
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between mb-2">
                             <p>当前模式</p>
-                            <span className="text-apple-blue font-mono bg-apple-blue/5 px-2 py-0.5 rounded text-[10px]">{getModeLabel()}</span>
+                            <span className="text-gradient-blue font-mono bg-apple-blue/10 dark:bg-apple-blue/20 px-2.5 py-1 rounded-full text-[10px] border border-apple-blue/20">{getModeLabel()}</span>
                         </div>
-                        <p className="mt-2 opacity-50">Powered by Gemini 3 Pro & Qwen</p>
+                        <div className="flex items-center justify-between">
+                            <p className="opacity-60">Powered by</p>
+                            <p className="text-gradient font-mono text-[10px]">Gemini 3.1 Flash</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col bg-apple-gray-50 dark:bg-black relative overflow-hidden transition-colors duration-300">
-                {/* Background Ambient Light */}
-                <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-apple-blue/5 via-transparent to-transparent pointer-events-none"></div>
+            <div className="flex-1 flex flex-col relative overflow-hidden transition-colors duration-300">
+                {/* Background Ambient Lights */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div className="absolute -top-40 -right-40 w-96 h-96 bg-apple-blue/10 dark:bg-apple-blue/5 rounded-full blur-3xl animate-float"></div>
+                    <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-aurora-purple/10 dark:bg-aurora-purple/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '-3s' }}></div>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-aurora-cyan/5 dark:bg-aurora-cyan/3 rounded-full blur-3xl"></div>
+                </div>
 
-                <header className="px-8 py-6 flex justify-between items-center z-10 border-b border-apple-gray-200 dark:border-white/5 bg-white/50 dark:bg-neutral-900/30 backdrop-blur-xl shrink-0">
+                <header className="px-8 py-6 flex justify-between items-center z-10 border-b border-apple-gray-200/50 dark:border-white/5 glass-strong shrink-0">
                     <div className="flex items-center gap-4">
-                        <h2 className="text-lg font-medium text-apple-gray-900 dark:text-white flex items-center gap-3">
-                            <span className="relative flex h-2.5 w-2.5">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                        <h2 className="text-lg font-semibold text-apple-gray-900 dark:text-white flex items-center gap-3">
+                            <span className="relative flex h-3 w-3">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-aurora-emerald opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-aurora-emerald shadow-lg shadow-aurora-emerald/50"></span>
                             </span>
-                            渲染画布
+                            <span className="text-gradient-blue">渲染画布</span>
                         </h2>
                         {selectedTemplate && (
-                            <div className="flex items-center gap-2 px-3 py-1 bg-apple-blue/10 text-apple-blue rounded-full text-xs">
+                            <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-apple-blue/10 to-aurora-purple/10 text-gradient-blue rounded-full text-xs border border-apple-blue/20 animate-scale-in">
                                 <Sparkles className="w-3 h-3" />
                                 <span>{selectedTemplate.name}</span>
                                 <button
                                     onClick={() => setSelectedTemplate(null)}
-                                    className="hover:text-apple-blue/70"
+                                    className="hover:text-apple-blue/70 transition-colors"
                                 >
                                     <X className="w-3 h-3" />
                                 </button>
@@ -253,17 +263,17 @@ function App() {
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => setShowTemplateGallery(true)}
-                            className="flex items-center gap-2 px-4 py-2 bg-apple-blue/10 text-apple-blue rounded-lg text-sm font-medium hover:bg-apple-blue/20 transition-colors"
+                            className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-apple-blue to-aurora-cyan text-white rounded-xl text-sm font-medium shadow-lg shadow-apple-blue/25 hover:shadow-apple-blue/40 hover:scale-105 transition-all btn-press"
                         >
                             <Sparkles className="w-4 h-4" />
                             模板画廊
                         </button>
-                        <div className="text-xs font-mono text-apple-gray-500 dark:text-apple-gray-400 bg-apple-gray-100 dark:bg-white/5 px-3 py-1 rounded-full">v0.2.2 Beta</div>
+                        <div className="text-xs font-mono bg-gradient-to-r from-apple-blue/10 to-aurora-purple/10 text-gradient-blue px-3 py-1.5 rounded-full border border-apple-blue/20">v0.3.1</div>
                     </div>
                 </header>
 
                 <div className="flex-1 p-8 z-10 flex items-center justify-center overflow-hidden">
-                    <div className="w-full h-full max-w-5xl bg-white dark:bg-apple-gray-900/40 rounded-2xl border border-apple-gray-200 dark:border-white/10 shadow-xl dark:shadow-2xl backdrop-blur-sm overflow-hidden flex flex-col transition-colors duration-300">
+                    <div className="w-full h-full max-w-5xl glass-strong rounded-3xl border border-apple-gray-200/50 dark:border-white/10 shadow-2xl dark:shadow-black/50 backdrop-blur-xl overflow-hidden flex flex-col transition-colors duration-300">
                         <div className="flex-1 p-1 overflow-hidden flex flex-col">
                             <ImageGenerator
                                 prompt={currentPrompt}

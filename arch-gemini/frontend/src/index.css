@@ -7,9 +7,132 @@
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
   }
- 
+
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
   }
+
+  * {
+    @apply border-apple-gray-200 dark:border-white/10;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-apple-blue via-purple-500 to-pink-500 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-blue {
+    @apply bg-gradient-to-r from-apple-blue to-cyan-400 bg-clip-text text-transparent;
+  }
+
+  .bg-gradient-mesh {
+    background:
+      radial-gradient(at 40% 20%, rgba(41, 151, 255, 0.15) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, rgba(168, 85, 247, 0.1) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, rgba(236, 72, 153, 0.1) 0px, transparent 50%),
+      radial-gradient(at 80% 50%, rgba(41, 151, 255, 0.08) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(168, 85, 247, 0.1) 0px, transparent 50%);
+  }
+
+  .dark .bg-gradient-mesh {
+    background:
+      radial-gradient(at 40% 20%, rgba(41, 151, 255, 0.12) 0px, transparent 50%),
+      radial-gradient(at 80% 0%, rgba(168, 85, 247, 0.08) 0px, transparent 50%),
+      radial-gradient(at 0% 50%, rgba(236, 72, 153, 0.06) 0px, transparent 50%),
+      radial-gradient(at 80% 50%, rgba(41, 151, 255, 0.1) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(168, 85, 247, 0.08) 0px, transparent 50%);
+  }
+
+  .glass {
+    @apply bg-white/70 dark:bg-white/5 backdrop-blur-xl border border-white/20 dark:border-white/10;
+  }
+
+  .glass-strong {
+    @apply bg-white/80 dark:bg-black/40 backdrop-blur-2xl border border-white/30 dark:border-white/10;
+  }
+
+  .glow-blue {
+    box-shadow: 0 0 20px rgba(41, 151, 255, 0.3), 0 0 40px rgba(41, 151, 255, 0.1);
+  }
+
+  .glow-purple {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.3), 0 0 40px rgba(168, 85, 247, 0.1);
+  }
+
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(41, 151, 255, 0.3) transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(41, 151, 255, 0.3);
+    border-radius: 3px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(41, 151, 255, 0.5);
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(41, 151, 255, 0.4); }
+    50% { box-shadow: 0 0 40px rgba(41, 151, 255, 0.8), 0 0 60px rgba(168, 85, 247, 0.4); }
+  }
+
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.4) 50%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+}
+
+/* Button press effect */
+.btn-press {
+  transition: all 0.15s ease;
+}
+
+.btn-press:active {
+  transform: scale(0.96);
+}
+
+/* Smooth fade in */
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
